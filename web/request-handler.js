@@ -12,9 +12,12 @@ exports.handleRequest = function (req, res) {
   // console.log(req);
     
   // }
-  
-  httpHelper.collectData(req);
-  httpHelper.serveAssets(res);
+  if (req.method === 'GET') {
+    httpHelper.serveAssets(res);
+  } else if (req.method === 'POST') {
+    httpHelper.collectData(req, res);
+    archive.downloadUrls(['www.google.com', 'www.facebook.com', 'www.yahoo.com']);
+  }
 
   // res.end(archive.paths.list);
 };

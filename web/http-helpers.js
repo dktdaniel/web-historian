@@ -28,28 +28,42 @@ exports.serveAssets = function(res, asset, callback) {
   
 };
 
-exports.sendResponse = function(response, data, statusCode) {
-  statusCode = statusCode || 200;
-  response.writeHead(statusCode, headers);
-  response.end(JSON.stringify(data));
-};
+// exports.sendResponse = function(response, data, statusCode) {
+//   statusCode = statusCode || 200;
+//   response.writeHead(statusCode, headers);
+//   response.end(JSON.stringify(data));
+// };
 
-exports.collectData = function(request, callback) {
+exports.collectData = function(request, response) {
   var data = '';
   request.on('data', function(chunk) {
     data += chunk;
   });
   request.on('end', function() {
     var split = data.split('=')[1];
-    console.log(split);
-    // console.log(JSON.stringify(split));
-    // console.log(JSON.stringify(data));
-    
-    //callback = isUrlInList
-    // callback(data);
+    archive.isUrlInList(split, function(boolean) {
+      if (boolean === true) {
+        console.log('URL IS IN LIST! ABOUT TO SERVE PAGE');
+      } else {
+        
+        archive.addUrlToList(split, function() {
+          fs.readFile(archive.paths.siteAssets + '/loading.html', (error, content) => {
+            if (error) {
+              console.log('error rendering the loading page');
+            } else {
+              response.writeHead(302);
+              response.end(content);
+            }
+          });
+          
+        });
+        
+        
+        
+        
+      }
+    });
   });
 };
-
-
 
 // As you progress, keep thinking about what helper functions you can put here!

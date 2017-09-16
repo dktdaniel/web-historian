@@ -1,7 +1,7 @@
 var fs = require('fs');
 var path = require('path');
 var _ = require('underscore');
-
+var http = require('http');
 
 /*
  * You will need to reuse the same paths many times over in the course of this sprint.
@@ -34,7 +34,6 @@ exports.readListOfUrls = function(callback) {
       res.end();
     } else {
       arrayOfUrls = content.split('\n');
-      arrayOfUrls = arrayOfUrls.slice(0);
       // console.log('console log of array of urls', arrayOfUrls);
       callback(arrayOfUrls);
     }
@@ -44,7 +43,7 @@ exports.readListOfUrls = function(callback) {
 exports.isUrlInList = function(url, callback) {
   exports.readListOfUrls(function(arrayOfUrls) {
     if (arrayOfUrls.includes(url)) {
-      // console.log('url', url, arrayOfUrls.includes(url));
+      
       callback(true);
     } else {
       // console.log('url', url, arrayOfUrls.includes(url));
@@ -66,7 +65,7 @@ exports.addUrlToList = function(url, callback) {
   // invoke isurlinlist  and if ig the value is false then add it to the list
   exports.isUrlInList(url, function(boolean) {
     if (boolean === false) {
-      fs.writeFile(exports.paths.list, url, (error) => {
+      fs.appendFile(exports.paths.list, url + '\n', (error) => {
         if (error) {
           console.log('error reading list');
         }
@@ -83,7 +82,7 @@ exports.isUrlArchived = function(url, callback) {
   //if no
     //downloadUrls
     
-  console.log('ISURLARCHIVED', exports.paths.archivedSites + url);
+  // console.log('ISURLARCHIVED', exports.paths.archivedSites + url);
   if (fs.existsSync(exports.paths.archivedSites + '/' + url)) {
     callback(true);
   } else {
@@ -92,6 +91,22 @@ exports.isUrlArchived = function(url, callback) {
 };
 
 exports.downloadUrls = function(urls) {
-  
   //call htmlfetcher
+  
+  urls.forEach(function(singleUrl) {
+    exports.isUrlArchived(singleUrl, function(boolean) {
+      if (boolean === false) {
+        // if the file doesn't exist, create it.
+        if (!fs.existsSync(exports.paths.archivedSites + '/' + singleUrl)) {
+          // We use fs.openSync to create the file
+          var path = fs.openSync(exports.paths.archivedSites + '/' + singleUrl, 'w');
+          fs.closeSync(path);
+        }
+        var file = fs.createWriteStream(exports.paths.archivedSites + '/' + singleUrl);
+        var request = http.get('http://' + singleUrl, function(response) {
+          response.pipe(file);
+        });
+      }
+    });
+  });
 };

@@ -15,15 +15,17 @@ var ip = '127.0.0.1';
   
 // };
 
-var server = http.createServer( (request, response) => {
-  // var parts = urlParser.parse(request.url);
-  // console.log('PARTS BEGIN', parts);
-  // console.log(request);
-  helpers.collectData(request);
-  archHelpers.readListOfUrls();
-  handler.handleRequest(request, response);
+// var server = http.createServer( (request, response) => {
+//   // var parts = urlParser.parse(request.url);
+//   // console.log('PARTS BEGIN', parts);
+//   // console.log(request);
+//   helpers.collectData(request);
+//   archHelpers.readListOfUrls();
+//   handler.handleRequest(request, response);
   
-});
+// });
+
+var server = http.createServer(handler.handleRequest);
 
 if (module.parent) {
   module.exports = server;
