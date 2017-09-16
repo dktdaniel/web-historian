@@ -13,11 +13,14 @@ exports.handleRequest = function (req, res) {
     
   // }
   if (req.method === 'GET') {
-    httpHelper.serveAssets(res);
+    httpHelper.serveAssets(res, archive.paths.siteAssets + '/index.html');
   } else if (req.method === 'POST') {
     httpHelper.collectData(req, res);
-    archive.downloadUrls(['www.google.com', 'www.facebook.com', 'www.yahoo.com']);
+    // archive.downloadUrls(['www.google.com', 'www.yahoo.com']);
   }
 
   // res.end(archive.paths.list);
 };
+
+// we need to figure out how to read the contents of. afile and render it
+//

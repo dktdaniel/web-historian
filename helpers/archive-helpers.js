@@ -92,7 +92,6 @@ exports.isUrlArchived = function(url, callback) {
 
 exports.downloadUrls = function(urls) {
   //call htmlfetcher
-  
   urls.forEach(function(singleUrl) {
     exports.isUrlArchived(singleUrl, function(boolean) {
       if (boolean === false) {
@@ -103,6 +102,7 @@ exports.downloadUrls = function(urls) {
           fs.closeSync(path);
         }
         var file = fs.createWriteStream(exports.paths.archivedSites + '/' + singleUrl);
+        // console.log('FILE: ', file);
         var request = http.get('http://' + singleUrl, function(response) {
           response.pipe(file);
         });
